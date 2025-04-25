@@ -1,14 +1,10 @@
 # Multi-Agent-AI-Assistant
 
-![N8N Multi-Agent System](https://placeholder-for-your-banner-image.jpg)
-
 ## Overview
 
 This repository contains a sophisticated multi-agent system built on n8n workflow automation platform. The system utilizes a "Supervisor Agent" architecture that orchestrates specialized sub-agents to handle different types of tasks. Each agent is designed with specific capabilities to work together as an integrated AI assistant system.
 
 ## Architecture
-
-![Architecture Diagram](https://placeholder-for-your-architecture-diagram.jpg)
 
 The system follows a hub-and-spoke architecture:
 
@@ -34,6 +30,8 @@ The Supervisor Agent (`Supervisor_Agent.json`) acts as the system's brain, recei
   - Web Search
   - Knowledge Base (Pinecone vector database)
   - Email, Contact, Calendar and Content Creator sub-agents
+ 
+<img width="920" alt="image" src="https://github.com/user-attachments/assets/9cb2aa46-7819-42eb-9340-433fe88f029f" />
 
 ### Calendar Agent
 
@@ -43,6 +41,8 @@ The Calendar Agent (`Calendar_Agent.json`) manages all calendar-related operatio
 - Retrieves existing events
 - Processes date/time queries
 - Works with Google Calendar integration
+
+<img width="662" alt="image" src="https://github.com/user-attachments/assets/a3b7849d-ca64-4e77-8b6e-5097ef00a7f0" />
 
 ### Contact Agent
 
@@ -62,6 +62,8 @@ The Email Agent (`Email_Agent.json`) manages email communications:
 - Replies to existing email threads
 - Works with Gmail integration
 
+<img width="697" alt="image" src="https://github.com/user-attachments/assets/0875d555-2fee-4578-846a-beb5667b455c" />
+
 ### Content Creator
 
 The Content Creator (`Content_Creator.json`) generates various content types:
@@ -71,38 +73,7 @@ The Content Creator (`Content_Creator.json`) generates various content types:
 - Produces titles, descriptions, and articles
 - Optimizes content for different platforms
 
-## Installation
-
-### Prerequisites
-
-- n8n instance (version 1.0 or higher)
-- OpenAI API access
-- Google account with API access for Calendar, Gmail, and Contacts
-- Pinecone vector database account (for knowledge base functionality)
-- Tavily API key (for web search)
-
-### Setup Steps
-
-1. **Install n8n:**
-   ```bash
-   npm install n8n -g
-   ```
-
-2. **Import workflows:**
-   - Navigate to your n8n instance
-   - Go to Workflows → Import from File
-   - Import each JSON file from this repository
-
-3. **Configure credentials:**
-   - Set up the following credentials in n8n:
-     - OpenAI API
-     - Google OAuth (for Calendar, Contacts, Gmail)
-     - Pinecone API
-     - Tavily API
-
-4. **Activate workflows:**
-   - Activate the Supervisor Agent workflow first
-   - Then activate all sub-agent workflows
+<img width="543" alt="image" src="https://github.com/user-attachments/assets/42ff5ef9-1fb1-4824-afcf-74ad5456f386" />
 
 ## Usage
 
@@ -145,16 +116,4 @@ Common issues and solutions:
 - **Agent coordination issues:** Verify the connections between Supervisor and sub-agents
 - **Authentication problems:** Ensure OAuth permissions are properly configured
 
-## License
-
-[Add your license information here]
-
-## Contributors
-
-[Add contributor information here]
-
 ---
-
-<p align="center">
-Created with <span style="color: #DC143C;">❤️</span> using <a href="https://n8n.io/">n8n</a> and <a href="https://openai.com/">OpenAI</a>
-</p>
