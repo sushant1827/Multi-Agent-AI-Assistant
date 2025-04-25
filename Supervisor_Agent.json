@@ -1,0 +1,410 @@
+{
+  "name": "Supervisor Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        220,
+        0
+      ],
+      "id": "8eeab3f5-a9d5-47e9-ac96-1dfb053b9f29",
+      "name": "When chat message received",
+      "webhookId": "96eb9cb1-3334-4e66-bf0e-75d5d51b2d65"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        300
+      ],
+      "id": "83f6c962-74eb-41d6-8103-f153250a28b6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "l8FNlTjuDhMWTtV0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        380,
+        300
+      ],
+      "id": "6ef1d1d0-6064-4422-a54c-390f9cbdf234",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        600,
+        300
+      ],
+      "id": "1369f871-c497-4fbd-9e82-81491d7de6f8",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\nYou are an AI Agent called Sam. Your job is to Orchestrate the activities between different agents and then formulate a friendly response back to the user.\n\nYou should never write email, create content, create summaries by yourself. Your job is to call agents and tools in the correct seueance.\n\nThink carefully about the sequesnce of events. Some tools might require you to first call another tool in order to pass it the correct information.\n\n# Additional Information\n- You are talking to Sushant\n- The current date and time is {{ $now.toString() }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        512,
+        0
+      ],
+      "id": "baa4f66e-20d6-4da7-966a-b7543b5e3f42",
+      "name": "Supervisor",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "toolDescription": "=Search Internet for this query",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Authorization",
+              "valueProvider": "fieldValue",
+              "value": " Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json.chatInput }}\",\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"days\": 7,\n  \"include_answer\": true,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": []\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        740,
+        300
+      ],
+      "id": "9b8581d7-37e1-4f25-aa09-9e3294d40ad5",
+      "name": "Web Search"
+    },
+    {
+      "parameters": {
+        "name": "EmailAgent",
+        "description": "Use this tool for any email related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "onV41lvVxpHwHOUS",
+          "mode": "list",
+          "cachedResultName": "Email Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        300
+      ],
+      "id": "90b38adc-108f-41f9-bf5c-a0dbae3a77c6",
+      "name": "Email"
+    },
+    {
+      "parameters": {
+        "name": "ContactAgent",
+        "description": "Use this tool for all contact related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "dN5v6cDu0nCIoXTq",
+          "mode": "list",
+          "cachedResultName": "Contact Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        300
+      ],
+      "id": "0be76d5d-8584-460d-bf2d-e37dae7e765c",
+      "name": "Contact"
+    },
+    {
+      "parameters": {
+        "name": "CalendarAgent",
+        "description": "Use this tool for any Calendar related actions.",
+        "workflowId": {
+          "__rl": true,
+          "value": "tkLNmApPO3FTVIOh",
+          "mode": "list",
+          "cachedResultName": "Calendar Agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        300
+      ],
+      "id": "7fbda334-4dc5-4a1f-9bb7-cf2bd848bd03",
+      "name": "Calendar"
+    },
+    {
+      "parameters": {
+        "name": "ContentCreator",
+        "description": "Use this tool for any creative writing actions",
+        "workflowId": {
+          "__rl": true,
+          "value": "XGzr34o57kS1C40f",
+          "mode": "list",
+          "cachedResultName": "Content Creator"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1300,
+        300
+      ],
+      "id": "f9977599-96a0-44ef-b5ca-48c840b74702",
+      "name": "Content Creator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1520,
+        460
+      ],
+      "id": "f8d2d651-12ca-4b7e-bee1-f3b25594b750",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "l8FNlTjuDhMWTtV0",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "KnowledgeBase",
+        "toolDescription": "Use this tool when asked questions from our own knowledge base of Gratuity policy.",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "vectorize",
+          "mode": "list",
+          "cachedResultName": "vectorize"
+        },
+        "options": {
+          "pineconeNamespace": "data"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.1,
+      "position": [
+        1440,
+        300
+      ],
+      "id": "76234e1f-2709-402f-81f8-c14310ccdbfb",
+      "name": "Knowledge Base",
+      "credentials": {
+        "pineconeApi": {
+          "id": "sBkQRU4FaoMKyc4H",
+          "name": "PineconeApi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Creator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Supervisor",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "68062031-f28a-461a-8820-06d8a55cd04b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2e18f4425eea19669ed4128549d988a89c1f695f4e3895e608af8476842be160"
+  },
+  "id": "hrGsIBVtAxr5gGTn",
+  "tags": []
+}
